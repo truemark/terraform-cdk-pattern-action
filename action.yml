@@ -1,0 +1,54 @@
+name: 'Terraform CDK Pattern Action'
+description: 'Plans a Terraform CDK stack during a pull request or deploys a Terraform CDK stack into a given workspace after merging code.'
+author: 'TrueMark'
+branding:
+  icon: 'check-circle'
+  color: 'red'
+
+inputs:
+  stack-name:
+    required: true
+    description: 'The Terraform CDK stack to plan or deploy'
+  workspace:
+    required: true
+    description: 'The workspace in which to plan or deploy the stack'
+  working-directory:
+    required: false
+    description: 'The directory where Terraform CDK lives'
+    default: ./
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Terraform CDK globally
+      run: |
+        npm cache verify
+        npm install --global cdktf-cli@latest
+
+    - name: Terraform CDK synth
+      working-directory: ${{ inputs.working-directory }}
+      run: cdktf synth
+      env:
+        TF_WORKSPACE: ${{ inputs.workspace }}
+
+    # This step is required to create or select a workspace within the cdktf context.
+    # TF_WORKSPACE cannot be set as an environment variable for this step or else cdktf will not behave correctly.
+    - name: Create Terraform Workspace
+      working-directory: ${{ inputs.working-directory }}/cdktf.out/stacks/${{ inputs.stack-name }}
+      run: |
+        terraform init
+        terraform workspace select ${{ inputs.workspace }} || terraform workspace new ${{ inputs.workspace }}
+
+    - name: Run Terraform CDK plan
+      if: github.event_name == 'pull_request'
+      working-directory: ${{ inputs.working-directory }}
+      run: cdktf plan
+      env:
+        TF_WORKSPACE: ${{ inputs.workspace }}
+
+    - name: Run Terraform CDK deploy
+      if: github.event_name == 'push'
+      working-directory: ${{ inputs.working-directory }}
+      run: cdktf deploy --auto-approve
+      env:
+        TF_WORKSPACE: ${{ inputs.workspace }}
