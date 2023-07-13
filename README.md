@@ -5,7 +5,7 @@
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/truemark/terraform-cdk-pattern-action)
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/truemark/terraform-cdk-pattern-action)
 
-Plans a Terraform CDK stack during a pull request or deploys a Terraform CDK stack into a given workspace after merging code. 
+Runs Terraform CDK commands against a stack in a given workspace.
 
 ## Examples
 ```yml
@@ -26,15 +26,26 @@ Plans a Terraform CDK stack during a pull request or deploys a Terraform CDK sta
           cmd: install --frozen-lockfile
           
       - name: Run Terraform CDK
+        if: github.event_name == 'pull_request'
         uses: truemark/terraform-cdk-pattern-action@v1
         with:
+          mode: synth plan
+          stack-name: MyStack
+          workspace: ${{ inputs.workspace }}
+          
+      - name: Run Terraform CDK
+        if: github.event_name == 'push'
+        uses: truemark/terraform-cdk-pattern-action@v1
+        with:
+          mode: deploy
           stack-name: MyStack
           workspace: ${{ inputs.workspace }}
 ```
 
 ## Inputs
-| Name              | Type   | Required | Description                                         |
-|-------------------|--------|----------|-----------------------------------------------------|
-| stack-name        | string | Yes      | The Terraform CDK stack to plan or deploy.          |
-| workspace         | string | Yes      | The workspace in which to plan or deploy the stack. |
-| working-directory | string | No       | The directory where Terraform CDK lives.            |
+| Name              | Type   | Required | Description                                                                                   |
+|-------------------|--------|----------|-----------------------------------------------------------------------------------------------|
+| mode              | array  | Yes      | A list of actions to run against the Terraform CDK stack. Options are synth, plan and deploy. |
+| stack-name        | string | Yes      | The Terraform CDK stack to plan or deploy.                                                    |
+| workspace         | string | Yes      | The workspace in which to plan or deploy the stack.                                           |
+| working-directory | string | No       | The directory where Terraform CDK lives.                                                      |

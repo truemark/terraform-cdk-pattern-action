@@ -1,14 +1,17 @@
 name: 'Terraform CDK Pattern Action'
-description: 'Plans a Terraform CDK stack during a pull request or deploys a Terraform CDK stack into a given workspace after merging code.'
+description: 'Runs Terraform CDK commands against a stack in a given workspace.'
 author: 'TrueMark'
 branding:
   icon: 'check-circle'
   color: 'red'
 
 inputs:
+  mode:
+    required: true
+    description: 'A list of actions to run against the Terraform CDK stack. Options are synth, plan and deploy.'
   stack-name:
     required: true
-    description: 'The Terraform CDK stack to plan or deploy'
+    description: 'The name of the Terraform CDK stack to run commands against'
   workspace:
     required: true
     description: 'The workspace in which to plan or deploy the stack'
@@ -28,6 +31,7 @@ runs:
 
     - name: Terraform CDK synth
       shell: bash
+      if: ${{ contains(env.mode, 'synth') }}
       working-directory: ${{ inputs.working-directory }}
       run: cdktf synth
       env:
@@ -44,7 +48,7 @@ runs:
 
     - name: Run Terraform CDK plan
       shell: bash
-      if: github.event_name == 'pull_request'
+      if: ${{ contains(env.mode, 'plan') }}
       working-directory: ${{ inputs.working-directory }}
       run: cdktf plan
       env:
@@ -52,7 +56,7 @@ runs:
 
     - name: Run Terraform CDK deploy
       shell: bash
-      if: github.event_name == 'push'
+      if: ${{ contains(env.mode, 'deploy') }}
       working-directory: ${{ inputs.working-directory }}
       run: cdktf deploy --auto-approve
       env:
