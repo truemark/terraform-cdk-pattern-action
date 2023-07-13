@@ -9,7 +9,7 @@ Plans a Terraform CDK stack during a pull request or deploys a Terraform CDK sta
 
 ## Examples
 ```yml
-  read:
+  cdktf:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
