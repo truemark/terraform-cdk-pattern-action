@@ -27,15 +27,15 @@ Runs Terraform CDK commands against a stack in a given workspace.
           
       - name: Run Terraform CDK
         if: github.event_name == 'pull_request'
-        uses: truemark/terraform-cdk-pattern-action@v1
+        uses: truemark/terraform-cdk-pattern-action@v3
         with:
-          mode: synth plan
+          mode: plan
           stack-name: MyStack
           workspace: ${{ inputs.workspace }}
           
       - name: Run Terraform CDK
         if: github.event_name == 'push'
-        uses: truemark/terraform-cdk-pattern-action@v1
+        uses: truemark/terraform-cdk-pattern-action@v3
         with:
           mode: deploy
           stack-name: MyStack
