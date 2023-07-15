@@ -30,6 +30,7 @@ runs:
         npm install --global cdktf-cli@latest
 
     - name: Terraform CDK synth
+      if: ${{ inputs.workspace != '' }}
       shell: bash
       if: ${{ contains(env.mode, 'synth') }}
       working-directory: ${{ inputs.working-directory }}
@@ -40,6 +41,7 @@ runs:
     # This step is required to create or select a workspace within the cdktf context.
     # TF_WORKSPACE cannot be set as an environment variable for this step or else cdktf will not behave correctly.
     - name: Create Terraform Workspace
+      if: ${{ inputs.workspace != '' }}
       shell: bash
       working-directory: ${{ inputs.working-directory }}/cdktf.out/stacks/${{ inputs.stack-name }}
       run: |
@@ -48,7 +50,7 @@ runs:
 
     - name: Run Terraform CDK plan
       shell: bash
-      if: ${{ contains(env.mode, 'plan') }}
+      if: ${{ contains(inputs.mode, 'plan') }}
       working-directory: ${{ inputs.working-directory }}
       run: cdktf plan
       env:
@@ -56,7 +58,7 @@ runs:
 
     - name: Run Terraform CDK deploy
       shell: bash
-      if: ${{ contains(env.mode, 'deploy') }}
+      if: ${{ contains(inputs.mode, 'deploy') }}
       working-directory: ${{ inputs.working-directory }}
       run: cdktf deploy --auto-approve
       env:
