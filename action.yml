@@ -8,17 +8,18 @@ branding:
 inputs:
   mode:
     required: true
-    description: 'A list of actions to run against the Terraform CDK stack. Options are synth, plan and deploy.'
+    description: 'A list of actions to run against the Terraform CDK stack. Options are plan and deploy.'
   stack-name:
     required: true
     description: 'The name of the Terraform CDK stack to run commands against'
-  workspace:
-    required: true
-    description: 'The workspace in which to plan or deploy the stack'
   working-directory:
     required: false
     description: 'The directory where Terraform CDK lives'
-    default: ./
+    default: .
+  workspace:
+    required: false
+    description: 'The workspace in which to plan or deploy the stack. Providing one triggers a cdk synth'
+    default: ''
 
 runs:
   using: 'composite'
@@ -32,7 +33,6 @@ runs:
     - name: Terraform CDK synth
       if: ${{ inputs.workspace != '' }}
       shell: bash
-      if: ${{ contains(env.mode, 'synth') }}
       working-directory: ${{ inputs.working-directory }}
       run: cdktf synth
       env:
