@@ -43,9 +43,9 @@ Runs Terraform CDK commands against a stack in a given workspace.
 ```
 
 ## Inputs
-| Name              | Type   | Required | Description                                                                                   |
-|-------------------|--------|----------|-----------------------------------------------------------------------------------------------|
-| mode              | array  | Yes      | A list of actions to run against the Terraform CDK stack. Options are synth, plan and deploy. |
-| stack-name        | string | Yes      | The Terraform CDK stack to plan or deploy.                                                    |
-| workspace         | string | Yes      | The workspace in which to plan or deploy the stack.                                           |
-| working-directory | string | No       | The directory where Terraform CDK lives.                                                      |
+| Name              | Type   | Required | Description                                                                             |
+|-------------------|--------|----------|-----------------------------------------------------------------------------------------|
+| mode              | array  | Yes      | A list of actions to run against the Terraform CDK stack. Options are plan and deploy.  |
+| stack-name        | string | Yes      | The name of the Terraform CDK stack to plan or deploy.                                  |
+| working-directory | string | No       | The directory where Terraform CDK lives.                                                |
+| workspace         | string | No       | The workspace in which to plan or deploy the stack. Providing one triggers a cdk synth. |
