@@ -28,7 +28,7 @@ runs:
       shell: bash
       run: |
         npm cache verify
-        npm install --global cdktf-cli@latest
+        npm install --global cdktf-cli@0.17.1
 
     - name: Terraform CDK synth
       if: ${{ inputs.workspace != '' }}
